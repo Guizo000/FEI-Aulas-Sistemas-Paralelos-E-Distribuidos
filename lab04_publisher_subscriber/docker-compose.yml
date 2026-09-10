@@ -1,0 +1,81 @@
+services:
+
+  proxy:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: cc7261:pyzmq
+    container_name: proxy
+    volumes:
+      - ./proxy.py:/app/main.py
+    ports:
+      - 5554:5554
+      - 5555:5555
+      - 5556:5556
+      - 5557:5557
+      - 5558:5558 
+
+  publisher_1:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: cc7261:pyzmq
+    volumes:
+      - ./publishers/publisher_1.py:/app/main.py
+    depends_on:
+      - proxy
+    deploy:
+      replicas: 1
+
+  publisher_2:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: cc7261:pyzmq
+    volumes:
+      - ./publishers/publisher_2.py:/app/main.py
+    depends_on:
+      - proxy
+    deploy:
+      replicas: 1
+
+  subscriber_1:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: cc7261:pyzmq
+    volumes:
+      - ./subscribers/subscriber_1.py:/app/main.py
+    depends_on:
+      - proxy
+    deploy:
+      replicas: 1
+    #You can use enviroment variables to change how your code flows
+    #environment:
+    #  - TOPIC_FILTER=pub1
+    
+  subscriber_2:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: cc7261:pyzmq
+    volumes:
+      - ./subscribers/subscriber_2.py:/app/main.py
+    depends_on:
+      - proxy
+    deploy:
+      replicas: 1
+    
+  subscriber_3:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: cc7261:pyzmq
+    volumes:
+      - ./subscribers/subscriber_3.py:/app/main.py
+    depends_on:
+      - proxy
+    deploy:
+      replicas: 1
+
+
